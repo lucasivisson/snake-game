@@ -42,6 +42,17 @@ const moveSnake = () => {
   snake.pop()
 }
 
+const drawGrid = () => {
+  ctx.lineWidth = 1
+  ctx.strokeStyle = "red"
+
+  ctx.lineTo(500, 0)
+  ctx.lineTo(500, 500)
+  ctx.stroke()
+}
+
+drawGrid()
+
 const gameLoop = () => {
   clearInterval(loopId)
   ctx.clearRect(0, 0, 1000, 500)
@@ -51,7 +62,19 @@ const gameLoop = () => {
 
   loopId = setInterval(() => {
     gameLoop()
-  }, 300)
+  }, 100)
 }
 
-gameLoop()
+// gameLoop()
+
+document.addEventListener("keydown", ({ key }) => {
+  if(key == "ArrowRight" && direction !== "left") {
+    direction = "right"
+  } else if(key == "ArrowLeft" && direction !== "right") {
+    direction = "left"
+  } else if(key == "ArrowUp" && direction !== "down") {
+    direction = "up"
+  } else if(key == "ArrowDown" && direction !== "up") {
+    direction = "down"
+  }
+})
