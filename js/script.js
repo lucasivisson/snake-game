@@ -1,7 +1,9 @@
 const canvas = document.querySelector('canvas')
-const image = document.getElementById("source");
+const image = document.getElementById('source');
 const ctx = canvas.getContext('2d')
+const audio = new Audio('../assets/assets_audio.mp3')
 
+let direction, loopId
 const squareSize = 30
 
 const snake = [{x: 210, y:210}, {x: 180, y:210}]
@@ -10,21 +12,20 @@ const randomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min)
 }
 
-const randomPosition = () => {
-const number = randomPosition(0, canvas.width - squareSize)
+const randomPosition = (min, max) => {
+  const number = randomNumber(min, max)
+  return Math.round(number / squareSize) * squareSize
 }
 
 const food = {
-  x: randomPosition(),
-  y: 90,
+  x: randomPosition(0, canvas.width - squareSize),
+  y: randomPosition(0, canvas.height - squareSize),
 }
-
-let direction, loopId
 
 const drawFood = () => {
   const { x, y } = food
-  ctx.shadowColor = "white"
-  ctx.shadowBlur = 8
+  ctx.shadowColor = "red"
+  ctx.shadowBlur = 6
   ctx.drawImage(image, x, y, squareSize, squareSize)
   ctx.shadowBlur = 0
 }
@@ -82,6 +83,38 @@ const drawGrid = () => {
   
 }
 
+const checkEat = () => {
+  const snakeHeadPosition = snake[0];
+  
+  if(snakeHeadPosition.x == food.x && snakeHeadPosition.y == food.y) {
+    snake.push(snake[snake.length-1])
+    audio.play();
+
+    let x = randomPosition(0, canvas.width - squareSize)
+    let y = randomPosition(0, canvas.height - squareSize)
+    while(snake.find((position) => position.x == x && position.y == y)) {
+      x = randomPosition(0, canvas.width - squareSize)
+      y = randomPosition(0, canvas.height - squareSize)
+    }
+    food.x = x
+    food.y = y
+  }
+}
+
+const checkCollision = () => {
+  for(let position of snake) {
+    if(position.x < 0) {
+      position.x = canvas.width - squareSize
+    } else if(position.x > canvas.width - squareSize) {
+      position.x = 0
+    } else if(position.y < 0) {
+      position.y = canvas.height - squareSize
+    } else if(position.y > canvas.height - squareSize) {
+      position.y = 0
+    }
+  }
+}
+
 const gameLoop = () => {
   clearInterval(loopId)
   ctx.clearRect(0, 0, 900, 510)
@@ -89,7 +122,9 @@ const gameLoop = () => {
   drawGrid()
   drawFood()
   moveSnake()
+  checkCollision()
   drawSnake()
+  checkEat()
 
   loopId = setInterval(() => {
     gameLoop()
