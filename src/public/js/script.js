@@ -128,7 +128,7 @@ const gameLoop = () => {
 
   loopId = setInterval(() => {
     gameLoop()
-  }, 200)
+  }, 100)
 }
 
 gameLoop()
