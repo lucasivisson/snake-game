@@ -42,7 +42,12 @@ io.on("connection", (socket) => {
     let wasFruitEaten = snake.checkEat();
     let snakes = [];
     game.snakes.forEach((snake) => {
-      snakes.push({ id: snake.id, body: snake.body });
+      snakes.push({
+        id: snake.id,
+        body: snake.body,
+        points: snake.points,
+        win: snake.win,
+      });
     });
     io.emit("move-snake", {
       snakes,

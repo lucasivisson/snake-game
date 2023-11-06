@@ -6,7 +6,7 @@ const audio = new Audio('../assets/assets_audio.mp3')
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 
-let snakes = [{id: 0, body: {x: 30, y:30}}];
+let snakes = [{id: 0, body: {x: 30, y:30}, points: 0}];
 let food = {
   x: 0,
   y: 0,
@@ -172,6 +172,24 @@ const gameLoop = () => {
       food = data.food;
       if(data.wasFruitEaten) {
         audio.play();
+      }
+      const myOwnSnake = snakes.find(snake => snake.id == id)
+      const oponentSnake = snakes.find(snake => snake.id != id)
+      const startScreen = document.getElementsByClassName('start-screen')[0];
+      const newGameDiv = document.getElementsByClassName('new-game')[0];
+      const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
+      if(myOwnSnake.win) {
+        const winnerDiv = document.getElementsByClassName('winner')[0];
+        startScreen.style.display = "block"
+        winnerDiv.style.display = "block"
+        newGameDiv.style.display = "none"
+        waitingPlayer.style.display = "none"
+      } else if(oponentSnake.win){
+        const loserDiv = document.getElementsByClassName('loser')[0];
+        startScreen.style.display = "block"
+        loserDiv.style.display = "block"
+        newGameDiv.style.display = "none"
+        waitingPlayer.style.display = "none"
       }
     })
     directionChanged = true

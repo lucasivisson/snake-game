@@ -5,10 +5,13 @@ import crypto from "node:crypto";
 export class Snake {
   public body: [{ x: number; y: number }];
   public direction: string;
+  public points;
+  public win;
 
   constructor(public game: Game, public id: string) {
     this.body = [{ x: 0, y: 0 }];
     this.id = id;
+    this.points = 0;
   }
 
   public generateSnakeBody() {
@@ -101,7 +104,10 @@ export class Snake {
       snakeHeadPosition.y == this.game.food.y
     ) {
       this.body.push(this.body[this.body.length - 1]);
-      // audio.play();
+      this.points = this.points + 1;
+      if (this.points === 10) {
+        this.win = true;
+      }
 
       this.game.food.generateNewPosition(
         this.game.width,
