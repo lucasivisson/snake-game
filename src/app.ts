@@ -19,7 +19,7 @@ let snake: Snake;
 
 io.on("connection", (socket) => {
   socket.on("create-snake", () => {
-    snake = new Snake(game);
+    snake = new Snake(game, socket.id);
     snake.generateSnakeBody();
     game.addSnake(snake);
     let snakes = [];
@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
     });
     io.emit("move-snake", {
       snakes,
-      wasFruitEaten: false,
+      wasFruitEaten,
       food: game.food,
     });
   });

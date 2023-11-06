@@ -3,13 +3,12 @@ import { Game } from "./Game";
 import crypto from "node:crypto";
 
 export class Snake {
-  public id: string;
   public body: [{ x: number; y: number }];
   public direction: string;
 
-  constructor(public game: Game) {
+  constructor(public game: Game, public id: string) {
     this.body = [{ x: 0, y: 0 }];
-    this.id = crypto.randomUUID();
+    this.id = id;
   }
 
   public generateSnakeBody() {

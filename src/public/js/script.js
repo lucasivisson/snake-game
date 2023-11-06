@@ -6,36 +6,49 @@ const audio = new Audio('../assets/assets_audio.mp3')
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 
-let snakes = [{id: 0, body: {x: 30, y:30}}]
+let snakes = [{id: 0, body: {x: 30, y:30}}];
 let food = {
   x: 0,
   y: 0,
 }
 let id;
-let usersConnected = 0
-const squareSize = 30
+let usersConnected = 0;
+let tryingToStartGame = false
+const squareSize = 30;
 const socket = io();
-let direction = "right"
-let loopId
+let direction = "right";
+let loopId;
+let directionChanged = true;
 
 form.addEventListener('submit', (e) => {
+  tryingToStartGame = true
   e.preventDefault();
   socket.emit('create-snake');
 });
 
+socket.on("connect", () => {
+  id = socket.id
+
+  socket.on('disconnect', () => {
+    usersConnected--;
+    const index = snakes.findIndex(snake => snake.id === id);
+    if(index > -1) {
+      snakes.splide(index, 1)
+    }
+    id = undefined
+  })
+})
+
 socket.on('create-snake', (data) => {
-  console.log('create-snake', data)
   snakes = data.snakes;
-  food = data.food
-  id = data.id,
+  food = data.food;
   usersConnected = data.usersConnected
-  console.log('snakesssss', snakes)
-  if(usersConnected === 1 && id) {
+  if(usersConnected === 1 && id == data.id) {
     const newGameDiv = document.getElementsByClassName('new-game')[0];
     newGameDiv.style.display = "none";
     const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
     waitingPlayer.style.display = "block";
-  } else if(usersConnected === 2 && id){
+  } else if(usersConnected === 2){
     const startScreen = document.getElementsByClassName('start-screen')[0];
     startScreen.style.display = "none"
   }
@@ -60,7 +73,6 @@ const drawFood = () => {
 }
 
 const drawSnake = () => {
-  console.log('osh vei', snakes)
   snakes.forEach((snake, _index) => {
     snake.body.forEach((body, index) => {
       if(index == 0) {
@@ -68,8 +80,12 @@ const drawSnake = () => {
       } else {
         ctx.fillStyle = "#ddd";
       }
+      if(id != snake.id) {
+        ctx.globalAlpha = 0.3
+      }
       ctx.fillRect(body.x, body.y, squareSize, squareSize)
     })
+    ctx.globalAlpha = 1
   })
 }
 
@@ -148,17 +164,17 @@ const checkCollision = () => {
 
 const gameLoop = () => {
   clearInterval(loopId)
-  if(usersConnected == 2) {
+  if(usersConnected == 2 && tryingToStartGame) {
     const snake = snakes.find(snake => snake.id == id)
     socket.emit("move-snake", {direction: direction, id: snake.id})
     socket.on('move-snake', (data) => {
-      console.log('move-snake', data)
       snakes = data.snakes;
       food = data.food;
       if(data.wasFruitEaten) {
         audio.play();
       }
     })
+    directionChanged = true
     ctx.clearRect(0, 0, 900, 510)
     
     drawGrid()
@@ -171,19 +187,23 @@ const gameLoop = () => {
 
   loopId = setInterval(() => {
     gameLoop()
-  }, 5000)
+  }, 200)
 }
 
 gameLoop()
 
 document.addEventListener("keydown", ({ key }) => {
-  if(key == "ArrowRight" && direction !== "left") {
-    direction = "right"
-  } else if(key == "ArrowLeft" && direction !== "right") {
-    direction = "left"
-  } else if(key == "ArrowUp" && direction !== "down") {
-    direction = "up"
-  } else if(key == "ArrowDown" && direction !== "up") {
-    direction = "down"
-  }
+  // console.log('dfasdas', directionHasChanged)
+  // if(directionHasChanged) {
+    if(key == "ArrowRight" && direction !== "left") {
+      direction = "right"
+    } else if(key == "ArrowLeft" && direction !== "right") {
+      direction = "left"
+    } else if(key == "ArrowUp" && direction !== "down") {
+      direction = "up"
+    } else if(key == "ArrowDown" && direction !== "up") {
+      direction = "down"
+    }
+    // directionChanged = false
+  // }
 })

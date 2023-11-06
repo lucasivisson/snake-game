@@ -27,9 +27,9 @@ canvas {
   position: absolute;
 }
 
-/* .title {
-  height: 10vh;
-} */
+span {
+  font-size: 50px;
+}
 
 .start-screen {
   width: 900px;
