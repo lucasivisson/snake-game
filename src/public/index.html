@@ -7,10 +7,15 @@
     <title>Snake Game</title>
   </head>
   <body>
-    <div class="title"><span>SNAKE GAME</span></div>
     <div class="start-screen">
-      <!-- <span class="score-value-1">00</span> -->
-      <form id="form" action=""><button>Começar</button></form>
+      <div class="new-game">
+        <div class="title"><span>SNAKE GAME</span></div>
+        <!-- <span class="score-value-1">00</span> -->
+        <form id="form" action=""><button>Iniciar</button></form>
+      </div>
+      <div class="waiting-player" style="display: none">
+        Esperando o oponente entrar...
+      </div>
     </div>
     <canvas width="900" height="510"></canvas>
     <div style="display: none">
