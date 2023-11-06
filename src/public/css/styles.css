@@ -19,4 +19,17 @@ body {
 
 canvas {
   background-color: #111;
+  position: absolute;
+}
+
+.title {
+  height: 10vh
+}
+
+.start-screen {
+  width: 900px;
+  height: 510px;
+  color: red;
+  position: relative;
+  z-index: 2
 }

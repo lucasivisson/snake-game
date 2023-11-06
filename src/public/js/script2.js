@@ -3,29 +3,16 @@ const image = document.getElementById('source');
 const ctx = canvas.getContext('2d')
 const audio = new Audio('../assets/assets_audio.mp3')
 
-const form = document.getElementById('form');
-const input = document.getElementById('input');
-
-let snake = [{x: 30, y:30}]
-let food = {
-  x: 0,
-  y: 0,
-}
-const squareSize = 30
 const socket = io();
-let direction, loopId
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  socket.emit('create-snake');
+socket.on('chat message', (msg) => {
+  console.log('recebendo dados', msg)
 });
 
-socket.on('create-snake', (data) => {
-  console.log('create-snake', data)
-  snake = data.snake.body;
-  food = data.food
-  usersConnected = data.usersConnected
-})
+let direction, loopId
+const squareSize = 30
+
+const snake = [{x: 210, y:210}, {x: 180, y:210}]
 
 const randomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min)
@@ -34,6 +21,11 @@ const randomNumber = (min, max) => {
 const randomPosition = (min, max) => {
   const number = randomNumber(min, max)
   return Math.round(number / squareSize) * squareSize
+}
+
+const food = {
+  x: randomPosition(0, canvas.width - squareSize),
+  y: randomPosition(0, canvas.height - squareSize),
 }
 
 const drawFood = () => {
@@ -130,22 +122,14 @@ const checkCollision = () => {
 
 const gameLoop = () => {
   clearInterval(loopId)
-  if(direction) {
-  socket.emit("move-snake", direction)
-  socket.on('move-snake', (data) => {
-    console.log('move-snake', data)
-    snake = data.snake.body;
-    food = data.food;
-  })
   ctx.clearRect(0, 0, 900, 510)
-  
+
   drawGrid()
   drawFood()
+  moveSnake()
+  checkCollision()
   drawSnake()
-    // moveSnake()
-    checkCollision()
-    // checkEat()
-  }
+  checkEat()
 
   loopId = setInterval(() => {
     gameLoop()

@@ -7,8 +7,10 @@
     <title>Snake Game</title>
   </head>
   <body>
-    <div class="score">
-      <span class="score-value-1">00</span>
+    <div class="title"><span>SNAKE GAME</span></div>
+    <div class="start-screen">
+      <!-- <span class="score-value-1">00</span> -->
+      <form id="form" action=""><button>Começar</button></form>
     </div>
     <canvas width="900" height="510"></canvas>
     <div style="display: none">
@@ -19,9 +21,6 @@
       integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
       crossorigin="anonymous"
     ></script>
-    <script>
-      const socket = io();
-    </script>
     <script src="./js/script.js"></script>
   </body>
 </html>
