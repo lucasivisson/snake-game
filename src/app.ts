@@ -14,7 +14,7 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(publicPath, "index.html"));
 });
 
-const game = new Game(1000, 510, 30);
+const game = new Game(900, 510, 30);
 let snake: Snake;
 
 io.on("connection", (socket) => {
@@ -22,21 +22,31 @@ io.on("connection", (socket) => {
     snake = new Snake(game);
     snake.generateSnakeBody();
     game.addSnake(snake);
+    let snakes = [];
+    game.snakes.forEach((snake) => {
+      snakes.push({ id: snake.id, body: snake.body });
+    });
     io.emit("create-snake", {
-      snake: { id: snake.id, body: snake.body },
+      snakes,
       food: game.food,
+      id: snake.id,
       usersConnected: game.snakes.length,
     });
   });
 
   socket.on("move-snake", (data) => {
-    console.log("entrou aq?", snake);
-    snake.setDirection(data);
+    const snake = game.findSnake(data.id);
+    snake.setDirection(data.direction);
     snake.moveSnake();
-    snake.checkEat();
-
+    snake.checkCollision();
+    let wasFruitEaten = snake.checkEat();
+    let snakes = [];
+    game.snakes.forEach((snake) => {
+      snakes.push({ id: snake.id, body: snake.body });
+    });
     io.emit("move-snake", {
-      snake: { id: snake.id, body: snake.body },
+      snakes,
+      wasFruitEaten: false,
       food: game.food,
     });
   });

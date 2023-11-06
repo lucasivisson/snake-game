@@ -116,17 +116,17 @@ export class Snake {
     return false;
   }
 
-  // public checkCollision(): void {
-  //   for (let position of this.body) {
-  //     if (position.x < 0) {
-  //       position.x = this.game.width - this.game.squareSize;
-  //     } else if (position.x > this.game.width - this.game.squareSize) {
-  //       position.x = 0;
-  //     } else if (position.y < 0) {
-  //       position.y = this.game.height - this.game.squareSize;
-  //     } else if (position.y > this.game.height - this.game.squareSize) {
-  //       position.y = 0;
-  //     }
-  //   }
-  // }
+  public checkCollision(): void {
+    for (let position of this.body) {
+      if (position.x < 0) {
+        position.x = this.game.width - this.game.squareSize;
+      } else if (position.x > this.game.width - this.game.squareSize) {
+        position.x = 0;
+      } else if (position.y < 0) {
+        position.y = this.game.height - this.game.squareSize;
+      } else if (position.y > this.game.height - this.game.squareSize) {
+        position.y = 0;
+      }
+    }
+  }
 }

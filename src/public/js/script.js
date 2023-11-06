@@ -6,14 +6,17 @@ const audio = new Audio('../assets/assets_audio.mp3')
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 
-let snake = [{x: 30, y:30}]
+let snakes = [{id: 0, body: {x: 30, y:30}}]
 let food = {
   x: 0,
   y: 0,
 }
+let id;
+let usersConnected = 0
 const squareSize = 30
 const socket = io();
-let direction, loopId
+let direction = "right"
+let loopId
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -22,10 +25,22 @@ form.addEventListener('submit', (e) => {
 
 socket.on('create-snake', (data) => {
   console.log('create-snake', data)
-  snake = data.snake.body;
+  snakes = data.snakes;
   food = data.food
+  id = data.id,
   usersConnected = data.usersConnected
+  console.log('snakesssss', snakes)
+  if(usersConnected === 1 && id) {
+    const newGameDiv = document.getElementsByClassName('new-game')[0];
+    newGameDiv.style.display = "none";
+    const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
+    waitingPlayer.style.display = "block";
+  } else if(usersConnected === 2 && id){
+    const startScreen = document.getElementsByClassName('start-screen')[0];
+    startScreen.style.display = "none"
+  }
 })
+
 
 const randomNumber = (min, max) => {
   return Math.round(Math.random() * (max - min) + min)
@@ -45,13 +60,16 @@ const drawFood = () => {
 }
 
 const drawSnake = () => {
-  snake.forEach((position, index) => {
-    if(index == 0) {
-      ctx.fillStyle = "white";
-    } else {
-      ctx.fillStyle = "#ddd";
-    }
-    ctx.fillRect(position.x, position.y, squareSize, squareSize)
+  console.log('osh vei', snakes)
+  snakes.forEach((snake, _index) => {
+    snake.body.forEach((body, index) => {
+      if(index == 0) {
+        ctx.fillStyle = "white";
+      } else {
+        ctx.fillStyle = "#ddd";
+      }
+      ctx.fillRect(body.x, body.y, squareSize, squareSize)
+    })
   })
 }
 
@@ -61,19 +79,19 @@ const moveSnake = () => {
   const snakeHeadPosition = snake[0]
 
   if(direction === "right") {
-    snake.unshift({ x: snakeHeadPosition.x + squareSize, y: snakeHeadPosition.y })
+    snake.unshift({ x: snakeHeadPosition.body.x + squareSize, y: snakeHeadPosition.body.y })
   }
 
   if(direction === "left") {
-    snake.unshift({ x: snakeHeadPosition.x - squareSize, y: snakeHeadPosition.y })
+    snake.unshift({ x: snakeHeadPosition.body.x - squareSize, y: snakeHeadPosition.body.y })
   }
 
   if(direction === "up") {
-    snake.unshift({ x: snakeHeadPosition.x, y: snakeHeadPosition.y - squareSize})
+    snake.unshift({ x: snakeHeadPosition.body.x, y: snakeHeadPosition.body.y - squareSize})
   }
 
   if(direction === "down") {
-    snake.unshift({ x: snakeHeadPosition.x, y: snakeHeadPosition.y + squareSize})
+    snake.unshift({ x: snakeHeadPosition.body.x, y: snakeHeadPosition.body.y + squareSize})
   }
 
   snake.pop()
@@ -99,8 +117,8 @@ const drawGrid = () => {
 const checkEat = () => {
   const snakeHeadPosition = snake[0];
   
-  if(snakeHeadPosition.x == food.x && snakeHeadPosition.y == food.y) {
-    snake.push(snake[snake.length-1])
+  if(snakeHeadPosition.body.x == food.x && snakeHeadPosition.body.y == food.y) {
+    snake.body.push(snake.body[snake.body.length-1])
     audio.play();
 
     let x = randomPosition(0, canvas.width - squareSize)
@@ -115,41 +133,45 @@ const checkEat = () => {
 }
 
 const checkCollision = () => {
-  for(let position of snake) {
-    if(position.x < 0) {
-      position.x = canvas.width - squareSize
-    } else if(position.x > canvas.width - squareSize) {
-      position.x = 0
-    } else if(position.y < 0) {
-      position.y = canvas.height - squareSize
-    } else if(position.y > canvas.height - squareSize) {
-      position.y = 0
+  for(let snakeObject of snake) {
+    if(snakeObject.body.x < 0) {
+      snakeObject.body.x = canvas.width - squareSize
+    } else if(snakeObject.body.x > canvas.width - squareSize) {
+      snakeObject.body.x = 0
+    } else if(snakeObject.body.y < 0) {
+      snakeObject.body.y = canvas.height - squareSize
+    } else if(snakeObject.body.y > canvas.height - squareSize) {
+      snakeObject.body.y = 0
     }
   }
 }
 
 const gameLoop = () => {
   clearInterval(loopId)
-  if(direction) {
-  socket.emit("move-snake", direction)
-  socket.on('move-snake', (data) => {
-    console.log('move-snake', data)
-    snake = data.snake.body;
-    food = data.food;
-  })
-  ctx.clearRect(0, 0, 900, 510)
-  
-  drawGrid()
-  drawFood()
-  drawSnake()
+  if(usersConnected == 2) {
+    const snake = snakes.find(snake => snake.id == id)
+    socket.emit("move-snake", {direction: direction, id: snake.id})
+    socket.on('move-snake', (data) => {
+      console.log('move-snake', data)
+      snakes = data.snakes;
+      food = data.food;
+      if(data.wasFruitEaten) {
+        audio.play();
+      }
+    })
+    ctx.clearRect(0, 0, 900, 510)
+    
+    drawGrid()
+    drawFood()
+    drawSnake()
     // moveSnake()
-    checkCollision()
+    // checkCollision()
     // checkEat()
   }
 
   loopId = setInterval(() => {
     gameLoop()
-  }, 100)
+  }, 5000)
 }
 
 gameLoop()

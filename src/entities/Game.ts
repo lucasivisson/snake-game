@@ -19,5 +19,9 @@ export class Game {
     this.snakes.push(snake);
   }
 
+  public findSnake(id: string) {
+    return this.snakes.find((snake) => snake.id === id);
+  }
+
   public gameLoop() {}
 }
