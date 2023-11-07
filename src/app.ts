@@ -18,6 +18,23 @@ const game = new Game(900, 510, 30);
 let snake: Snake;
 
 io.on("connection", (socket) => {
+  if (game.snakes.length === 2) {
+    io.emit("connection-full");
+  }
+
+  socket.on("disconnect", () => {
+    game.removeSnake(socket.id);
+    game.updateSnakePoints();
+    let snakes = [];
+    game.snakes.forEach((snake) => {
+      snakes.push({ id: snake.id, body: snake.body });
+    });
+    io.emit("update-connection", {
+      usersConnected: game.snakes.length,
+      snakes,
+    });
+  });
+
   socket.on("create-snake", () => {
     snake = new Snake(game, socket.id);
     snake.generateSnakeBody();

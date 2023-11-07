@@ -27,10 +27,6 @@ canvas {
   position: absolute;
 }
 
-span {
-  font-size: 50px;
-}
-
 .start-screen {
   width: 900px;
   height: 510px;
@@ -74,11 +70,11 @@ button:hover {
   box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
 }
 
-.waiting-player, .winner, .loser {
+.waiting-player, .winner, .loser, .player-disconnected {
   display: none;
 }
 
-.winner, .loser {
+.winner, .loser, .player-disconnected {
   width: 900px;
   height: 510px;
   color: white;
@@ -88,10 +84,15 @@ button:hover {
   background-color: #111;
 }
 
-.winner-text, .loser-text {
+.player-disconnected {
+  font-size: 16px;
+}
+
+.winner-text, .loser-text, .player-disconnected-text {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
+  flex-direction: column;
   height: 100%;
 }

@@ -5,6 +5,12 @@ const audio = new Audio('../assets/assets_audio.mp3')
 
 const form = document.getElementById('form');
 const input = document.getElementById('input');
+const startScreen = document.getElementsByClassName('start-screen')[0];
+const newGameDiv = document.getElementsByClassName('new-game')[0];
+const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
+const winnerDiv = document.getElementsByClassName('winner')[0];
+const loserDiv = document.getElementsByClassName('loser')[0];
+const playerDisconnected = document.getElementsByClassName('player-disconnected')[0];
 
 let snakes = [{id: 0, body: {x: 30, y:30}, points: 0}];
 let food = {
@@ -13,12 +19,13 @@ let food = {
 }
 let id;
 let usersConnected = 0;
-let tryingToStartGame = false
+let tryingToStartGame = false;
 const squareSize = 30;
 const socket = io();
 let direction = "right";
 let loopId;
-let directionChanged = true;
+let directionChanged = false;
+let theGameIsOver = true;
 
 form.addEventListener('submit', (e) => {
   tryingToStartGame = true
@@ -28,29 +35,31 @@ form.addEventListener('submit', (e) => {
 
 socket.on("connect", () => {
   id = socket.id
+})
 
-  socket.on('disconnect', () => {
-    usersConnected--;
-    const index = snakes.findIndex(snake => snake.id === id);
-    if(index > -1) {
-      snakes.splide(index, 1)
-    }
-    id = undefined
-  })
+socket.on("update-connection", (data) => {
+  snakes = data.snakes;
+  if(data.usersConnected < 2 && !theGameIsOver) {
+    startScreen.style.display = "block"
+    playerDisconnected.style.display = "block"
+    newGameDiv.style.display = "none"
+    waitingPlayer.style.display = "none"
+    theGameIsOver = true
+  }
 })
 
 socket.on('create-snake', (data) => {
   snakes = data.snakes;
   food = data.food;
   usersConnected = data.usersConnected
+  console.log(usersConnected)
   if(usersConnected === 1 && id == data.id) {
-    const newGameDiv = document.getElementsByClassName('new-game')[0];
     newGameDiv.style.display = "none";
-    const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
     waitingPlayer.style.display = "block";
   } else if(usersConnected === 2){
-    const startScreen = document.getElementsByClassName('start-screen')[0];
     startScreen.style.display = "none"
+    theGameIsOver = false
+    gameLoop()
   }
 })
 
@@ -175,29 +184,30 @@ const gameLoop = () => {
       }
       const myOwnSnake = snakes.find(snake => snake.id == id)
       const oponentSnake = snakes.find(snake => snake.id != id)
-      const startScreen = document.getElementsByClassName('start-screen')[0];
-      const newGameDiv = document.getElementsByClassName('new-game')[0];
-      const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
       if(myOwnSnake.win) {
-        const winnerDiv = document.getElementsByClassName('winner')[0];
         startScreen.style.display = "block"
         winnerDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
+        theGameIsOver = true
       } else if(oponentSnake.win){
-        const loserDiv = document.getElementsByClassName('loser')[0];
         startScreen.style.display = "block"
         loserDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
+        theGameIsOver = true
       }
     })
-    directionChanged = true
+    directionChanged = false
     ctx.clearRect(0, 0, 900, 510)
     
     drawGrid()
     drawFood()
     drawSnake()
+    if(theGameIsOver) {
+      clearInterval(loopId)
+      return
+    }
     // moveSnake()
     // checkCollision()
     // checkEat()
@@ -208,11 +218,9 @@ const gameLoop = () => {
   }, 200)
 }
 
-gameLoop()
-
 document.addEventListener("keydown", ({ key }) => {
-  // console.log('dfasdas', directionHasChanged)
-  // if(directionHasChanged) {
+  if(!directionChanged) {
+    directionChanged = true
     if(key == "ArrowRight" && direction !== "left") {
       direction = "right"
     } else if(key == "ArrowLeft" && direction !== "right") {
@@ -222,6 +230,5 @@ document.addEventListener("keydown", ({ key }) => {
     } else if(key == "ArrowDown" && direction !== "up") {
       direction = "down"
     }
-    // directionChanged = false
-  // }
+  }
 })
