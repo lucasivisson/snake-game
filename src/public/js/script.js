@@ -189,12 +189,18 @@ const gameLoop = () => {
         winnerDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
+        usersConnected = 0
+        snakes = []
+        socket.disconnect()
         theGameIsOver = true
       } else if(oponentSnake.win){
         startScreen.style.display = "block"
         loserDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
+        usersConnected = 0
+        snakes = []
+        socket.disconnect()
         theGameIsOver = true
       }
     })

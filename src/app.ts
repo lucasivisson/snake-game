@@ -27,12 +27,19 @@ io.on("connection", (socket) => {
     game.updateSnakePoints();
     let snakes = [];
     game.snakes.forEach((snake) => {
-      snakes.push({ id: snake.id, body: snake.body });
+      snakes.push({
+        id: snake.id,
+        body: snake.body,
+        points: snake.points,
+        win: snake.win,
+      });
     });
-    io.emit("update-connection", {
-      usersConnected: game.snakes.length,
-      snakes,
-    });
+    if (game.snakes.length > 0) {
+      io.emit("update-connection", {
+        usersConnected: game.snakes.length,
+        snakes,
+      });
+    }
   });
 
   socket.on("create-snake", () => {
@@ -41,7 +48,12 @@ io.on("connection", (socket) => {
     game.addSnake(snake);
     let snakes = [];
     game.snakes.forEach((snake) => {
-      snakes.push({ id: snake.id, body: snake.body });
+      snakes.push({
+        id: snake.id,
+        body: snake.body,
+        points: snake.points,
+        win: snake.win,
+      });
     });
     io.emit("create-snake", {
       snakes,
@@ -58,7 +70,11 @@ io.on("connection", (socket) => {
     snake.checkCollision();
     let wasFruitEaten = snake.checkEat();
     let snakes = [];
+    let someoneWin = false;
     game.snakes.forEach((snake) => {
+      if (snake.win) {
+        someoneWin = true;
+      }
       snakes.push({
         id: snake.id,
         body: snake.body,
@@ -68,6 +84,7 @@ io.on("connection", (socket) => {
     });
     io.emit("move-snake", {
       snakes,
+      someoneWin,
       wasFruitEaten,
       food: game.food,
     });
