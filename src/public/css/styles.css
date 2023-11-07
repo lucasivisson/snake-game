@@ -38,6 +38,16 @@ canvas {
   justify-content: center;
 }
 
+.points {
+  width: 900px;
+  height: 560px;
+  color: white;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
 .new-game {
   display: flex;
   align-items: center;
@@ -70,7 +80,7 @@ button:hover {
   box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
 }
 
-.waiting-player, .winner, .loser, .player-disconnected {
+.waiting-player, .winner, .loser, .player-disconnected, .points {
   display: none;
 }
 
