@@ -83,6 +83,15 @@ button:hover {
   display: none;
 }
 
+.scores {
+  width: 900px;
+  height: 560px;
+  color: white;
+  position: relative;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
 .winner, .loser, .player-disconnected {
   width: 900px;
   height: 510px;
