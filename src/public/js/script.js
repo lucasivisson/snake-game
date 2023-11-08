@@ -27,7 +27,6 @@ const squareSize = 30;
 const socket = io();
 let direction = "right";
 let loopId;
-// let directionChanged = false;
 let theGameIsOver = true;
 
 form.addEventListener('submit', (e) => {
@@ -116,30 +115,6 @@ const drawSnake = () => {
   })
 }
 
-const moveSnake = () => {
-  if(!direction) return
-
-  const snakeHeadPosition = snake[0]
-
-  if(direction === "right") {
-    snake.unshift({ x: snakeHeadPosition.body.x + squareSize, y: snakeHeadPosition.body.y })
-  }
-
-  if(direction === "left") {
-    snake.unshift({ x: snakeHeadPosition.body.x - squareSize, y: snakeHeadPosition.body.y })
-  }
-
-  if(direction === "up") {
-    snake.unshift({ x: snakeHeadPosition.body.x, y: snakeHeadPosition.body.y - squareSize})
-  }
-
-  if(direction === "down") {
-    snake.unshift({ x: snakeHeadPosition.body.x, y: snakeHeadPosition.body.y + squareSize})
-  }
-
-  snake.pop()
-}
-
 const drawGrid = () => {
   ctx.lineWidth = 1
   ctx.strokeStyle = "#191919"
@@ -154,38 +129,6 @@ const drawGrid = () => {
       ctx.lineTo(0, i)
       ctx.lineTo(900, i)
       ctx.stroke()
-  }
-}
-
-const checkEat = () => {
-  const snakeHeadPosition = snake[0];
-  
-  if(snakeHeadPosition.body.x == food.x && snakeHeadPosition.body.y == food.y) {
-    snake.body.push(snake.body[snake.body.length-1])
-    audio.play();
-
-    let x = randomPosition(0, canvas.width - squareSize)
-    let y = randomPosition(0, canvas.height - squareSize)
-    while(snake.find((position) => position.x == x && position.y == y)) {
-      x = randomPosition(0, canvas.width - squareSize)
-      y = randomPosition(0, canvas.height - squareSize)
-    }
-    food.x = x
-    food.y = y
-  }
-}
-
-const checkCollision = () => {
-  for(let snakeObject of snake) {
-    if(snakeObject.body.x < 0) {
-      snakeObject.body.x = canvas.width - squareSize
-    } else if(snakeObject.body.x > canvas.width - squareSize) {
-      snakeObject.body.x = 0
-    } else if(snakeObject.body.y < 0) {
-      snakeObject.body.y = canvas.height - squareSize
-    } else if(snakeObject.body.y > canvas.height - squareSize) {
-      snakeObject.body.y = 0
-    }
   }
 }
 
@@ -228,7 +171,6 @@ const gameLoop = () => {
         theGameIsOver = true
       }
     })
-    // directionChanged = false
     ctx.clearRect(0, 0, 900, 510)
     
     drawGrid()
@@ -238,9 +180,6 @@ const gameLoop = () => {
       clearInterval(loopId)
       return
     }
-    // moveSnake()
-    // checkCollision()
-    // checkEat()
   }
 
   loopId = setInterval(() => {
@@ -249,8 +188,6 @@ const gameLoop = () => {
 }
 
 document.addEventListener("keydown", ({ key }) => {
-  // if(!directionChanged) {
-  //   directionChanged = true
     if(key == "ArrowRight" && direction !== "left") {
       direction = "right"
     } else if(key == "ArrowLeft" && direction !== "right") {
@@ -260,5 +197,4 @@ document.addEventListener("keydown", ({ key }) => {
     } else if(key == "ArrowDown" && direction !== "up") {
       direction = "down"
     }
-  // }
 })
