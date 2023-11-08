@@ -22,7 +22,8 @@ io.on("connection", (socket) => {
     io.emit("connection-full");
   }
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (reason) => {
+    console.log(`user disconnected due to ${reason}`);
     game.removeSnake(socket.id);
     game.updateSnakePoints();
     let snakes = [];
@@ -40,6 +41,10 @@ io.on("connection", (socket) => {
         snakes,
       });
     }
+  });
+
+  socket.on("error", (error) => {
+    console.error(`error occurred: ${error.message}`);
   });
 
   socket.on("create-snake", () => {
@@ -65,29 +70,31 @@ io.on("connection", (socket) => {
 
   socket.on("move-snake", (data) => {
     const snake = game.findSnake(data.id);
-    snake.setDirection(data.direction);
-    snake.moveSnake();
-    snake.checkCollision();
-    let wasFruitEaten = snake.checkEat();
-    let snakes = [];
-    let someoneWin = false;
-    game.snakes.forEach((snake) => {
-      if (snake.win) {
-        someoneWin = true;
-      }
-      snakes.push({
-        id: snake.id,
-        body: snake.body,
-        points: snake.points,
-        win: snake.win,
+    if (snake) {
+      snake.setDirection(data.direction);
+      snake.moveSnake();
+      snake.checkCollision();
+      let wasFruitEaten = snake.checkEat();
+      let snakes = [];
+      let someoneWin = false;
+      game.snakes.forEach((snake) => {
+        if (snake.win) {
+          someoneWin = true;
+        }
+        snakes.push({
+          id: snake.id,
+          body: snake.body,
+          points: snake.points,
+          win: snake.win,
+        });
       });
-    });
-    io.emit("move-snake", {
-      snakes,
-      someoneWin,
-      wasFruitEaten,
-      food: game.food,
-    });
+      io.emit("move-snake", {
+        snakes,
+        someoneWin,
+        wasFruitEaten,
+        food: game.food,
+      });
+    }
   });
 });
 

@@ -27,7 +27,7 @@ const squareSize = 30;
 const socket = io();
 let direction = "right";
 let loopId;
-let directionChanged = false;
+// let directionChanged = false;
 let theGameIsOver = true;
 
 form.addEventListener('submit', (e) => {
@@ -56,7 +56,6 @@ socket.on('create-snake', (data) => {
   snakes = data.snakes;
   food = data.food;
   usersConnected = data.usersConnected
-  console.log(usersConnected)
   if(usersConnected === 1 && id == data.id) {
     newGameDiv.style.display = "none";
     waitingPlayer.style.display = "block";
@@ -88,17 +87,31 @@ const drawFood = () => {
 
 const drawSnake = () => {
   snakes.forEach((snake, _index) => {
-    snake.body.forEach((body, index) => {
-      if(index == 0) {
-        ctx.fillStyle = "white";
-      } else {
-        ctx.fillStyle = "#ddd";
-      }
-      if(id != snake.id) {
-        ctx.globalAlpha = 0.3
-      }
-      ctx.fillRect(body.x, body.y, squareSize, squareSize)
-    })
+    if(snake.id == id) {
+      snake.body.forEach((body, index) => {
+        if(index == 0) {
+          ctx.fillStyle = "#3b81fe"; 
+        } else {
+          ctx.fillStyle = "#3b53fe";
+        }
+        if(id != snake.id) {
+          ctx.globalAlpha = 0.3
+        }
+        ctx.fillRect(body.x, body.y, squareSize, squareSize)
+      })
+    } else {
+      snake.body.forEach((body, index) => {
+        if(index == 0) {
+          ctx.fillStyle = "#ff002d";
+        } else {
+          ctx.fillStyle = "#bb002d";
+        }
+        if(id != snake.id) {
+          ctx.globalAlpha = 0.3
+        }
+        ctx.fillRect(body.x, body.y, squareSize, squareSize)
+      })
+    }
     ctx.globalAlpha = 1
   })
 }
@@ -197,23 +210,25 @@ const gameLoop = () => {
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
         pointsDiv.style.display = "none"
+        playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []
         socket.disconnect()
         theGameIsOver = true
-      } else if(oponentSnake.win){
+      } else if(oponentSnake.win) {
         startScreen.style.display = "block"
         loserDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
         pointsDiv.style.display = "none"
+        playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []
         socket.disconnect()
         theGameIsOver = true
       }
     })
-    directionChanged = false
+    // directionChanged = false
     ctx.clearRect(0, 0, 900, 510)
     
     drawGrid()
@@ -230,12 +245,12 @@ const gameLoop = () => {
 
   loopId = setInterval(() => {
     gameLoop()
-  }, 200)
+  }, 300)
 }
 
 document.addEventListener("keydown", ({ key }) => {
-  if(!directionChanged) {
-    directionChanged = true
+  // if(!directionChanged) {
+  //   directionChanged = true
     if(key == "ArrowRight" && direction !== "left") {
       direction = "right"
     } else if(key == "ArrowLeft" && direction !== "right") {
@@ -245,5 +260,5 @@ document.addEventListener("keydown", ({ key }) => {
     } else if(key == "ArrowDown" && direction !== "up") {
       direction = "down"
     }
-  }
+  // }
 })

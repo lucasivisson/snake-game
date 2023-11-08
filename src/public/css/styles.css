@@ -41,7 +41,6 @@ canvas {
 .points {
   width: 900px;
   height: 560px;
-  color: white;
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -105,4 +104,16 @@ button:hover {
   width: 100%;
   flex-direction: column;
   height: 100%;
+}
+
+.title {
+  font-size: 50px;
+}
+
+.my-points { 
+  color: #3b81fe
+}
+
+.oponent-points {
+  color: #ff002d
 }
