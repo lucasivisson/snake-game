@@ -81,6 +81,7 @@ button:hover {
 
 .waiting-player, .server-full, .winner, .loser, .player-disconnected, .scores {
   display: none;
+
 }
 
 .scores {
@@ -106,12 +107,13 @@ button:hover {
   font-size: 16px;
 }
 
-.winner-text, .loser-text, .player-disconnected-text {
+.winner-text, .loser-text, .player-disconnected-text, .server-full-text, .waiting-player-text {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   flex-direction: column;
+  gap: 25px;
   height: 100%;
 }
 
@@ -125,4 +127,8 @@ button:hover {
 
 .oponent-score {
   color: #ff002d
+}
+
+.back-menu {
+  width: 250px;
 }

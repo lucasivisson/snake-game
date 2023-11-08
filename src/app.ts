@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     console.log(`user disconnected due to ${reason}`);
     game.removeSnake(socket.id);
-    game.updateSnakePoints();
+    game.resetSnakes();
     let snakes = [];
     game.snakes.forEach((snake) => {
       snakes.push({
@@ -66,6 +66,22 @@ io.on("connection", (socket) => {
         usersConnected: game.snakes.length,
       });
     }
+  });
+
+  socket.on("skip-game", () => {
+    game.removeSnake(socket.id);
+    let snakes = [];
+    game.snakes.forEach((snake) => {
+      snakes.push({
+        id: snake.id,
+        body: snake.body,
+        points: snake.points,
+      });
+    });
+    io.emit("skip-game", {
+      usersConnected: game.snakes.length,
+      snakes,
+    });
   });
 
   socket.on("move-snake", (data) => {

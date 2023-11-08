@@ -3,7 +3,8 @@ const image = document.getElementById('source');
 const ctx = canvas.getContext('2d')
 const audio = new Audio('../assets/assets_audio.mp3')
 
-const form = document.getElementById('form');
+const startGameForm = document.getElementById('start-game-form');
+const backMenuForm = document.getElementById('back-menu-form');
 const input = document.getElementById('input');
 const startScreen = document.getElementsByClassName('start-screen')[0];
 const newGameDiv = document.getElementsByClassName('new-game')[0];
@@ -30,11 +31,29 @@ let direction = "right";
 let loopId;
 let theGameIsOver = true;
 
-form.addEventListener('submit', (e) => {
+startGameForm.addEventListener('submit', (e) => {
   tryingToStartGame = true
   e.preventDefault();
   socket.emit('create-snake');
 });
+
+backMenuForm.addEventListener('submit', (e) => {
+  tryingToStartGame = false
+  e.preventDefault();
+  socket.emit('skip-game');
+  startScreen.style.display = "flex"
+  severFull.style.display = "none"
+  newGameDiv.style.display = "block"
+  waitingPlayer.style.display = "none"
+  playerDisconnected.style.display = "none"
+  scoresDiv.style.display = "none"
+});
+
+socket.on("skip-game", (data) => {
+  usersConnected = data.usersConnected;
+  snakes = data.snakes;
+  theGameIsOver = true;
+})
 
 socket.on("connect", () => {
   id = socket.id

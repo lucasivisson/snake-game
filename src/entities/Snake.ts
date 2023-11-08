@@ -1,6 +1,5 @@
 import { randomPosition } from "../utils/generateNumber";
 import { Game } from "./Game";
-import crypto from "node:crypto";
 
 export class Snake {
   public body: [{ x: number; y: number }];
@@ -47,18 +46,6 @@ export class Snake {
   public setDirection(direction: string) {
     this.direction = direction;
   }
-
-  // public changeDirection(pressedKey: string): void {
-  //   if (pressedKey == "ArrowRight" && this.direction !== "left") {
-  //     this.direction = "right";
-  //   } else if (pressedKey == "ArrowLeft" && this.direction !== "right") {
-  //     this.direction = "left";
-  //   } else if (pressedKey == "ArrowUp" && this.direction !== "down") {
-  //     this.direction = "up";
-  //   } else if (pressedKey == "ArrowDown" && this.direction !== "up") {
-  //     this.direction = "down";
-  //   }
-  // }
 
   public moveSnake() {
     if (!this.direction) return;

@@ -14,21 +14,41 @@
     <div class="start-screen">
       <div class="new-game">
         <div class="title"><span>SNAKE GAME</span></div>
-        <form id="form" action=""><button>Iniciar</button></form>
+        <form id="start-game-form" action=""><button>Iniciar</button></form>
       </div>
-      <div class="waiting-player">Esperando o oponente entrar...</div>
+      <div class="waiting-player">
+        <div class="waiting-player-text">
+          <span>Esperando o oponente entrar...</span>
+          <form id="back-menu-form" action="">
+            <button class="back-menu">Voltar para o menu</button>
+          </form>
+        </div>
+      </div>
       <div class="server-full">
-        O servidor esta cheio, esperando jogadores desconectarem para iniciar o
-        jogo.
+        <div class="server-full-text">
+          <span>
+            O servidor esta cheio, esperando jogadores desconectarem para
+            iniciar o jogo.
+          </span>
+          <form id="back-menu-form" action="">
+            <button class="back-menu">Voltar para o menu</button>
+          </form>
+        </div>
       </div>
       <div class="winner">
         <div class="winner-text">
           <span>Você ganhou :D</span>
+          <form id="back-menu-form" action="">
+            <button class="back-menu">Voltar para o menu</button>
+          </form>
         </div>
       </div>
       <div class="loser">
         <div class="loser-text">
           <span>Você perdeu :/</span>
+          <form id="back-menu-form" action="">
+            <button class="back-menu">Voltar para o menu</button>
+          </form>
         </div>
       </div>
       <div class="player-disconnected">
@@ -37,6 +57,9 @@
           <span>
             Esperando um novo oponente conectar para reiniciar o jogo.
           </span>
+          <form id="back-menu-form" action="">
+            <button class="back-menu">Voltar para o menu</button>
+          </form>
         </div>
       </div>
     </div>

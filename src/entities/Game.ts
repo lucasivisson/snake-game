@@ -32,6 +32,14 @@ export class Game {
     });
   }
 
+  public resetSnakes() {
+    this.snakes.forEach((snake) => {
+      snake.body = [{ x: snake.body[0].x, y: snake.body[0].y }];
+      snake.points = 0;
+      snake.win = false;
+    });
+  }
+
   public findSnake(id: string) {
     return this.snakes.find((snake) => snake.id === id);
   }
