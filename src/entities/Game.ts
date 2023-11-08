@@ -4,7 +4,6 @@ import { Snake } from "./Snake";
 export class Game {
   public snakes: Snake[];
   public food: Food;
-  public connections: number;
 
   constructor(
     public width: number,
@@ -14,15 +13,6 @@ export class Game {
     this.snakes = [];
     this.food = new Food();
     this.food.generateFood(this.width, this.height, this.squareSize);
-    this.connections = 0;
-  }
-
-  public setConnections(increase: boolean) {
-    if (increase) {
-      this.connections = this.connections + 1;
-    } else {
-      this.connections = this.connections - 1;
-    }
   }
 
   public addSnake(snake: Snake) {

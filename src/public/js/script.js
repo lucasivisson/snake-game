@@ -11,9 +11,10 @@ const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
 const winnerDiv = document.getElementsByClassName('winner')[0];
 const loserDiv = document.getElementsByClassName('loser')[0];
 const playerDisconnected = document.getElementsByClassName('player-disconnected')[0];
-const pointsDiv = document.getElementsByClassName('points')[0]
-const myPointsSpan = document.getElementsByClassName('my-points')[0]
-const oponentPointsSpan = document.getElementsByClassName('oponent-points')[0]
+const scoresDiv = document.getElementsByClassName('scores')[0]
+const myScoreSpan = document.getElementsByClassName('my-score')[0]
+const oponentScoreSpan = document.getElementsByClassName('oponent-score')[0]
+const severFull = document.getElementsByClassName('server-full')[0]
 
 let snakes = [{id: 0, body: {x: 30, y:30}, points: 0}];
 let food = {
@@ -39,30 +40,45 @@ socket.on("connect", () => {
   id = socket.id
 })
 
+socket.on("connection-full", (data) => {
+  if(id == data.id) {
+    startScreen.style.display = "flex"
+    severFull.style.display = "block"
+    newGameDiv.style.display = "none"
+    waitingPlayer.style.display = "none"
+    playerDisconnected.style.display = "none"
+    scoresDiv.style.display = "none"
+  }
+})
+
 socket.on("update-connection", (data) => {
   snakes = data.snakes;
   if(data.usersConnected < 2 && !theGameIsOver) {
     startScreen.style.display = "block"
     playerDisconnected.style.display = "block"
     newGameDiv.style.display = "none"
+    severFull.style.display = "none"
     waitingPlayer.style.display = "none"
-    pointsDiv.style.display = "none"
+    scoresDiv.style.display = "none"
     theGameIsOver = true
   }
 })
 
 socket.on('create-snake', (data) => {
-  snakes = data.snakes;
-  food = data.food;
-  usersConnected = data.usersConnected
-  if(usersConnected === 1 && id == data.id) {
-    newGameDiv.style.display = "none";
-    waitingPlayer.style.display = "block";
-  } else if(usersConnected === 2){
-    startScreen.style.display = "none"
-    pointsDiv.style.display = "flex"
-    theGameIsOver = false
-    gameLoop()
+  const snake = data.snakes.find((snake) => snake.id == id);
+  if(snake) {
+    snakes = data.snakes;
+    food = data.food;
+    usersConnected = data.usersConnected
+    if(usersConnected === 1 && id == data.id) {
+      newGameDiv.style.display = "none";
+      waitingPlayer.style.display = "block";
+    } else if(usersConnected === 2){
+      startScreen.style.display = "none"
+      scoresDiv.style.display = "flex"
+      theGameIsOver = false
+      gameLoop()
+    }
   }
 })
 
@@ -144,15 +160,15 @@ const gameLoop = () => {
         audio.play();
       }
       const myOwnSnake = snakes.find(snake => snake.id == id)
-      myPointsSpan.innerHTML = `Meus pontos: ${myOwnSnake.points}`
+      myScoreSpan.innerHTML = `Meus pontos: ${myOwnSnake.points}`
       const oponentSnake = snakes.find(snake => snake.id != id)
-      oponentPointsSpan.innerHTML = `Pontos do oponente: ${oponentSnake.points}`
+      oponentScoreSpan.innerHTML = `Pontos do oponente: ${oponentSnake.points}`
       if(myOwnSnake.win) {
         startScreen.style.display = "block"
         winnerDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
-        pointsDiv.style.display = "none"
+        scoresDiv.style.display = "none"
         playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []
@@ -163,7 +179,7 @@ const gameLoop = () => {
         loserDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
-        pointsDiv.style.display = "none"
+        scoresDiv.style.display = "none"
         playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []

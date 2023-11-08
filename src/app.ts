@@ -18,10 +18,6 @@ const game = new Game(900, 510, 30);
 let snake: Snake;
 
 io.on("connection", (socket) => {
-  if (game.snakes.length === 2) {
-    io.emit("connection-full");
-  }
-
   socket.on("disconnect", (reason) => {
     console.log(`user disconnected due to ${reason}`);
     game.removeSnake(socket.id);
@@ -48,24 +44,28 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create-snake", () => {
-    snake = new Snake(game, socket.id);
-    snake.generateSnakeBody();
-    game.addSnake(snake);
-    let snakes = [];
-    game.snakes.forEach((snake) => {
-      snakes.push({
-        id: snake.id,
-        body: snake.body,
-        points: snake.points,
-        win: snake.win,
+    if (game.snakes.length === 2) {
+      io.emit("connection-full", { id: socket.id });
+    } else {
+      snake = new Snake(game, socket.id);
+      snake.generateSnakeBody();
+      game.addSnake(snake);
+      let snakes = [];
+      game.snakes.forEach((snake) => {
+        snakes.push({
+          id: snake.id,
+          body: snake.body,
+          points: snake.points,
+          win: snake.win,
+        });
       });
-    });
-    io.emit("create-snake", {
-      snakes,
-      food: game.food,
-      id: snake.id,
-      usersConnected: game.snakes.length,
-    });
+      io.emit("create-snake", {
+        snakes,
+        food: game.food,
+        id: snake.id,
+        usersConnected: game.snakes.length,
+      });
+    }
   });
 
   socket.on("move-snake", (data) => {

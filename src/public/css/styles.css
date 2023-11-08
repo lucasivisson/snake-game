@@ -79,7 +79,7 @@ button:hover {
   box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
 }
 
-.waiting-player, .winner, .loser, .player-disconnected, .points {
+.waiting-player, .server-full, .winner, .loser, .player-disconnected, .scores {
   display: none;
 }
 
@@ -110,10 +110,10 @@ button:hover {
   font-size: 50px;
 }
 
-.my-points { 
+.my-score { 
   color: #3b81fe
 }
 
-.oponent-points {
+.oponent-score {
   color: #ff002d
 }
