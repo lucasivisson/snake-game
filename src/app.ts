@@ -18,6 +18,12 @@ const game = new Game(900, 510, 30);
 let snake: Snake;
 
 io.on("connection", (socket) => {
+  console.log("user connected");
+
+  socket.on("ping", () => {
+    socket.emit("pong");
+  });
+
   socket.on("disconnect", (reason) => {
     console.log(`user disconnected due to ${reason}`);
     game.removeSnake(socket.id);

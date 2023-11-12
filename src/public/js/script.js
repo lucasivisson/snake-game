@@ -12,10 +12,11 @@ const waitingPlayer = document.getElementsByClassName('waiting-player')[0];
 const winnerDiv = document.getElementsByClassName('winner')[0];
 const loserDiv = document.getElementsByClassName('loser')[0];
 const playerDisconnected = document.getElementsByClassName('player-disconnected')[0];
-const scoresDiv = document.getElementsByClassName('scores')[0]
+const infoDiv = document.getElementsByClassName('info')[0]
 const myScoreSpan = document.getElementsByClassName('my-score')[0]
 const oponentScoreSpan = document.getElementsByClassName('oponent-score')[0]
 const severFull = document.getElementsByClassName('server-full')[0]
+const latencySpan = document.getElementsByClassName('latency')[0]
 
 let snakes = [{id: 0, body: {x: 30, y:30}, points: 0}];
 let food = {
@@ -30,6 +31,7 @@ const socket = io();
 let direction = "right";
 let loopId;
 let theGameIsOver = true;
+let initialLatency = 0
 
 startGameForm.addEventListener('submit', (e) => {
   tryingToStartGame = true
@@ -43,10 +45,10 @@ backMenuForm.addEventListener('submit', (e) => {
   socket.emit('skip-game');
   startScreen.style.display = "flex"
   severFull.style.display = "none"
-  newGameDiv.style.display = "block"
+  newGameDiv.style.display = "flex"
   waitingPlayer.style.display = "none"
   playerDisconnected.style.display = "none"
-  scoresDiv.style.display = "none"
+  infoDiv.style.display = "none"
 });
 
 socket.on("skip-game", (data) => {
@@ -66,19 +68,20 @@ socket.on("connection-full", (data) => {
     newGameDiv.style.display = "none"
     waitingPlayer.style.display = "none"
     playerDisconnected.style.display = "none"
-    scoresDiv.style.display = "none"
+    infoDiv.style.display = "none"
   }
 })
 
 socket.on("update-connection", (data) => {
   snakes = data.snakes;
-  if(data.usersConnected < 2 && !theGameIsOver) {
+  usersConnected = data.usersConnected
+  if(usersConnected < 2 && !theGameIsOver) {
     startScreen.style.display = "block"
     playerDisconnected.style.display = "block"
     newGameDiv.style.display = "none"
     severFull.style.display = "none"
     waitingPlayer.style.display = "none"
-    scoresDiv.style.display = "none"
+    infoDiv.style.display = "none"
     theGameIsOver = true
   }
 })
@@ -94,22 +97,22 @@ socket.on('create-snake', (data) => {
       waitingPlayer.style.display = "block";
     } else if(usersConnected === 2){
       startScreen.style.display = "none"
-      scoresDiv.style.display = "flex"
+      infoDiv.style.display = "flex"
       theGameIsOver = false
       gameLoop()
     }
   }
 })
 
+socket.on('pong', (data) => {
+  const latency = Date.now() - initialLatency;
+  latencySpan.innerHTML = `Latência: ${latency}ms`
+});
 
-const randomNumber = (min, max) => {
-  return Math.round(Math.random() * (max - min) + min)
-}
-
-const randomPosition = (min, max) => {
-  const number = randomNumber(min, max)
-  return Math.round(number / squareSize) * squareSize
-}
+setInterval(() => {
+  initialLatency = Date.now();
+  socket.emit('ping');
+}, 5000);
 
 const drawFood = () => {
   const { x, y } = food
@@ -187,7 +190,7 @@ const gameLoop = () => {
         winnerDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
-        scoresDiv.style.display = "none"
+        infoDiv.style.display = "none"
         playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []
@@ -198,7 +201,7 @@ const gameLoop = () => {
         loserDiv.style.display = "block"
         newGameDiv.style.display = "none"
         waitingPlayer.style.display = "none"
-        scoresDiv.style.display = "none"
+        infoDiv.style.display = "none"
         playerDisconnected.style.display = "none"
         usersConnected = 0
         snakes = []

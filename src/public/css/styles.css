@@ -79,18 +79,25 @@ button:hover {
   box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
 }
 
-.waiting-player, .server-full, .winner, .loser, .player-disconnected, .scores {
+.waiting-player, .server-full, .winner, .loser, .player-disconnected, .info {
   display: none;
-
 }
 
-.scores {
+.info {
   width: 900px;
   height: 560px;
   color: white;
   position: relative;
   align-items: flex-start;
   justify-content: space-between;
+  flex-direction: column;
+}
+
+.scores {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%
 }
 
 .winner, .loser, .player-disconnected {
