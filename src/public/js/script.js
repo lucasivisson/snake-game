@@ -223,13 +223,13 @@ const gameLoop = () => {
 }
 
 document.addEventListener("keydown", ({ key }) => {
-    if(key == "ArrowRight" && direction !== "left") {
-      direction = "right"
-    } else if(key == "ArrowLeft" && direction !== "right") {
-      direction = "left"
-    } else if(key == "ArrowUp" && direction !== "down") {
-      direction = "up"
-    } else if(key == "ArrowDown" && direction !== "up") {
-      direction = "down"
-    }
+  if(key == "ArrowRight" && direction !== "left") {
+    direction = "right"
+  } else if(key == "ArrowLeft" && direction !== "right") {
+    direction = "left"
+  } else if(key == "ArrowUp" && direction !== "down") {
+    direction = "up"
+  } else if(key == "ArrowDown" && direction !== "up") {
+    direction = "down"
+  }
 })

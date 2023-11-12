@@ -43,6 +43,4 @@ export class Game {
   public findSnake(id: string) {
     return this.snakes.find((snake) => snake.id === id);
   }
-
-  public gameLoop() {}
 }
