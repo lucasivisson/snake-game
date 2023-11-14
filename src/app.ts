@@ -52,6 +52,9 @@ io.on("connection", (socket) => {
   socket.on("create-snake", () => {
     if (game.snakes.length === 2) {
       io.emit("connection-full", { id: socket.id });
+      console.log(
+        "a new user tried to connect to the game, but the server is full"
+      );
     } else {
       snake = new Snake(game, socket.id);
       snake.generateSnakeBody();
@@ -71,10 +74,12 @@ io.on("connection", (socket) => {
         id: snake.id,
         usersConnected: game.snakes.length,
       });
+      console.log(`snake created successfully with id: ${socket.id}`);
     }
   });
 
   socket.on("skip-game", () => {
+    console.log(`user of id: ${socket.id} returned to home screen`);
     game.removeSnake(socket.id);
     let snakes = [];
     game.snakes.forEach((snake) => {
@@ -116,6 +121,9 @@ io.on("connection", (socket) => {
         wasFruitEaten,
         food: game.food,
       });
+      console.log(
+        `snake user ${socket.id} has moved to the ${snake.direction} and is with snake head in the position x: ${snake.body[0].x} e y: ${snake.body[0].y}`
+      );
     }
   });
 });
