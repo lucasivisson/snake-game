@@ -18,7 +18,7 @@ const oponentScoreSpan = document.getElementsByClassName('oponent-score')[0]
 const severFull = document.getElementsByClassName('server-full')[0]
 const latencySpan = document.getElementsByClassName('latency')[0]
 
-let snakes = [{id: 0, body: {x: 30, y:30}, points: 0}];
+let snakes = [{id: 0, body: {x: 30, y:30}, points: 0, win: false}];
 let food = {
   x: 0,
   y: 0,

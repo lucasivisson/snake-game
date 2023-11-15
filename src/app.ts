@@ -87,6 +87,7 @@ io.on("connection", (socket) => {
         id: snake.id,
         body: snake.body,
         points: snake.points,
+        win: false,
       });
     });
     io.emit("skip-game", {
